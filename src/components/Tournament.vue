@@ -10,13 +10,12 @@
 
         <div class="api-list">
             <ul class="api-list__item" v-for="(api, api_index) in apis">
-                <select v-model="api.parent" v-bind:name="'api_parent' + api_index">
-                    <option v-for="(api, api_index) in apis" v-bind:value="api_index">
-                        {{api_index}}
+                <select v-model="api.parent" name="parent">
+                    <option v-for="(api, api_index_child) in apis" v-if="api_index != api_index_child" v-bind:value="api_index">
+                        {{ api_index_child }}
                     </option>
                 </select>
                 <label for="">{{api_index}}</label>
-                <label for="">Parent</label><input v-model="api.parent">
                 <button @click="remove(api_index)">X</button>
                 <input v-model="api.url">
                 <div class="api-list__item" v-for="(param, param_index) in api.params">
@@ -39,7 +38,6 @@
     name: 'tournament',
     data: function () {
       return {
-        parents: {},
 //        apis: [
 //          {
 //            url : '',
