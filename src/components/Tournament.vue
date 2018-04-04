@@ -11,7 +11,7 @@
         <div class="api-list">
             <ul class="api-list__item" v-for="(api, api_index) in apis">
                 <select v-model="api.parent" name="parent">
-                    <option v-for="(api, api_index_child) in apis" v-if="api_index != api_index_child" v-bind:value="api_index">
+                    <option v-for="(api, api_index_child) in apis" v-if="api_index != api_index_child" v-bind:value="api_index_child">
                         {{ api_index_child }}
                     </option>
                 </select>
@@ -83,11 +83,27 @@
         Vue.delete(this.apis[key].params, paramsIndex);
       },
       doRequest: function (api_index) {
+        var self = this;
         var api = this.apis[api_index];
         Axios.get(api.url, api.params)
           .then(function (result) {
-            console.log(result);
+            self.callChild(api_index, result);
           })
+      },
+      callChild: function (parent, result) {
+        var self = this;
+        this.apis.map(function (obj, index) {
+          if (obj.parent !== parent) {
+            return false; //skip
+          }
+
+          var api = self.apis[index];
+          Axios.get(api.url, api.params)
+            .then(function (result) {
+              console.log(result);
+              self.callChild(index, result);
+            })
+        });
       }
     }
   }
